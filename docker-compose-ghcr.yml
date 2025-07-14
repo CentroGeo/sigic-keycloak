@@ -1,0 +1,26 @@
+
+services:
+  keycloak:
+    image: ghcr.io/sigic/sigic-keycloak:main
+    command: start --optimized
+    # command: start-dev
+    # usar start-dev para desarrollo en lugar de start --optimized
+    restart: unless-stopped
+    expose:
+      - "8080"
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=${KC_DB_URL_HOST}
+      - KC_DB_URL_DATABASE=${KC_DB_URL_DATABASE}
+      - KC_DB_USERNAME=${KC_DB_USERNAME}
+      - KC_DB_PASSWORD=${KC_DB_PASSWORD}
+      - KC_HOSTNAME=${KC_HOSTNAME}
+      - KC_PROXY_HEADERS=xforwarded
+      - KC_HOSTNAME_STRICT=${KC_HOSTNAME_STRICT:-true}
+      - KC_HTTP_ENABLED=true
+      # las siguientes variables solo deben usarse si no se ha creado el usuario admin, en condiciones normales no son necesarias
+      # - KC_BOOTSTRAP_ADMIN_USERNAME=${KC_BOOTSTRAP_ADMIN_USERNAME}
+      # - KC_BOOTSTRAP_ADMIN_PASSWORD=${KC_BOOTSTRAP_ADMIN_PASSWORD}
+      - JAVA_OPTS=${JAVA_OPTS}
+      - VIRTUAL_HOST=${KC_HOSTNAME}
+      - VIRTUAL_PORT=8080
