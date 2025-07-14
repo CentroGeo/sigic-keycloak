@@ -1,0 +1,48 @@
+# Ignora archivos del sistema y editores
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# Archivos de entorno
+.env
+.env.*
+
+# Archivos y carpetas de control de versiones
+.git
+.gitignore
+.gitattributes
+
+# Archivos del sistema operativo
+ehthumbs.db
+desktop.ini
+
+# Node, Python, Venv, etc.
+node_modules
+venv
+__pycache__/
+*.py[cod]
+*.egg-info
+
+# Archivos de CI/CD
+.github/
+*.yml
+*.yaml
+
+# Archivos de documentación
+README.md
+LICENSE
+CHANGELOG.md
+
+# Archivos de prueba
+tests/
+test/
+*.test.*
+
+# Archivos del host que no deben copiarse
+docker-compose.yml
+docker-compose*.yml
+*.jmx
