@@ -25,7 +25,7 @@ jobs:
       - name: Set variables
         id: vars
         run: |
-          echo "owner=sigic" >> $GITHUB_OUTPUT
+          echo "owner=CentroGeo" >> $GITHUB_OUTPUT
           echo "image=sigic-keycloak" >> $GITHUB_OUTPUT
           echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           echo "branch=develop" >> $GITHUB_OUTPUT
@@ -55,7 +55,7 @@ jobs:
       - name: Set variables
         id: vars
         run: |
-          echo "owner=sigic" >> $GITHUB_OUTPUT
+          echo "owner=CentroGeo" >> $GITHUB_OUTPUT
           echo "image=sigic-keycloak" >> $GITHUB_OUTPUT
           echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           echo "branch=develop" >> $GITHUB_OUTPUT
