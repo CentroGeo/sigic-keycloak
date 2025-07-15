@@ -1,7 +1,7 @@
 
 services:
   keycloak:
-    image: ghcr.io/sigic/sigic-keycloak:main
+    image: ghcr.io/centrogeo/sigic-keycloak:main
     command: start --optimized
     # command: start-dev
     # usar start-dev para desarrollo en lugar de start --optimized
