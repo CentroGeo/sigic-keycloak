@@ -9,6 +9,7 @@ jobs:
   build:
     name: Build SIGIC Keycloak image (develop)
     runs-on: [self-hosted, build-dev, sigic-keycloak]
+    environment: main
 
     permissions:
       packages: write
@@ -19,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GHCR_GEOINTSIGIC_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Set variables
         id: vars
@@ -45,7 +46,7 @@ jobs:
     name: Deploy to dev server
     needs: build
     runs-on: [self-hosted, deploy-dev, sigic-keycloak]
-    environment: develop
+    environment: main
 
     steps:
       - name: Checkout repo
@@ -60,7 +61,7 @@ jobs:
           echo "branch=develop" >> $GITHUB_OUTPUT
 
       - name: Docker login to GHCR
-        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GHCR_GEOINTSIGIC_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Reemplazar imagen en docker-compose-ghcr.yml
         run: |
