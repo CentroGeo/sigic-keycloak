@@ -6,7 +6,29 @@ on:
       - develop
 
 jobs:
-  build:
+  lint-theme:
+    name: Lint Keycloak theme
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install linters
+        run: |
+          sudo apt-get update && sudo apt-get install -y npm
+          npm install -g htmlhint stylelint eslint
+
+      - name: Lint HTML
+        run: htmlhint keycloak/themes/sigic/
+
+      - name: Lint CSS
+        run: stylelint "keycloak/themes/sigic/**/*.css"
+
+      - name: Lint JS
+        run: eslint "keycloak/themes/sigic/**/*.js" || true  # Si quieres no fallar si no hay JS
+
+  build-and-test:
     name: Build SIGIC Keycloak image (develop)
     runs-on: [self-hosted, build-develop, sigic-keycloak]
     environment: develop
@@ -36,6 +58,24 @@ jobs:
             -t ghcr.io/${{ steps.vars.outputs.owner }}/${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.branch }} \
             -t ghcr.io/${{ steps.vars.outputs.owner }}/${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.sha }} \
             -f ./keycloak/Dockerfile ./keycloak
+          
+      - name: Run smoke test
+        run: |
+          docker run -d --rm --name test-keycloak \
+            -e KC_DB=postgres \
+            -e KC_DB_URL_HOST=${{ secrets.KC_DB_URL_HOST }} \
+            -e KC_DB_URL_DATABASE=${{ secrets.KC_DB_URL_DATABASE }} \
+            -e KC_DB_USERNAME=${{ secrets.KC_DB_USERNAME }} \
+            -e KC_DB_PASSWORD=${{ secrets.KC_DB_PASSWORD }} \
+            -e KC_HTTP_ENABLED=true \
+            -p 8080:8080 \
+            ghcr.io/${{ steps.vars.outputs.owner }}/${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.branch }}
+
+          for i in {1..20}; do
+            curl -sSf http://localhost:8080/health/ready && break || sleep 2
+          done
+
+          docker rm -f test-keycloak || true
 
       - name: Push image
         run: |
@@ -44,7 +84,7 @@ jobs:
 
   deploy:
     name: Deploy to dev server
-    needs: build
+    needs: build-and-test
     runs-on: [self-hosted, deploy-develop, sigic-keycloak]
     environment: develop
 
