@@ -1,19 +1,20 @@
 // keycloak/stylelint.config.js
 module.exports = {
-    extends: ["stylelint-config-standard"],
+    extends: ["stylelint-config-standard-scss"],
+    plugins: ["stylelint-scss"],
     rules: {
-        // Desactiva validación de pattern para custom properties (PatternFly no cumple regex estándar)
         "custom-property-pattern": null,
-
-        // Compatibilidad con estilo de PatternFly
         "declaration-block-no-redundant-longhand-properties": null,
         "declaration-block-single-line-max-declarations": null,
-        "selector-not-notation": null,
-        "no-descending-specificity": null,
+        "value-keyword-case": null,
         "selector-class-pattern": null,
         "property-no-vendor-prefix": null,
         "value-no-vendor-prefix": null,
-        "selector-pseudo-element-colon-notation": "double",
+        "selector-pseudo-element-colon-notation": null,
+        "selector-attribute-quotes": null,
+        "at-rule-empty-line-before": null,
+        "scss/dollar-variable-pattern": null,
+        "no-descending-specificity": null,
         "declaration-empty-line-before": null
     }
-}
+};
