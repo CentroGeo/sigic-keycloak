@@ -2,17 +2,21 @@
 module.exports = {
   extends: [
     "stylelint-config-standard",
-    "stylelint-config-prettier"
   ],
   rules: {
     // Permitir custom properties tipo PatternFly (con mayúsculas y guiones dobles)
-    "custom-property-pattern": "^--[a-zA-Z0-9-]+$",
+    "custom-property-pattern": "^--[a-zA-Z0-9_\\-]+$",
 
     // Otras reglas útiles que no molestan a PatternFly
     "selector-class-pattern": null,
     "property-no-vendor-prefix": null,
     "value-no-vendor-prefix": null,
     "selector-pseudo-element-colon-notation": "double",
-    "declaration-empty-line-before": null
+    "declaration-empty-line-before": null,
+
+    // Desactiva reglas innecesarias o problemáticas para CSS generados
+    "declaration-block-single-line-max-declarations": null,
+    "selector-not-notation": null,
+    "no-descending-specificity": null
   }
 };
