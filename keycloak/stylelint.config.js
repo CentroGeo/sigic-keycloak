@@ -23,6 +23,16 @@ module.exports = {
         "function-url-quotes": null,
         "font-family-name-quotes": null,
         "font-family-no-missing-generic-family-keyword": null,
-        "keyframe-selector-notation": null
+        "keyframe-selector-notation": null,
+        "at-rule-no-vendor-prefix": null,
+        "custom-property-no-missing-var-function": null,
+        "media-feature-name-no-vendor-prefix": null,
+        "color-function-alias-notation": null,
+        "color-function-notation": null,
+        "alpha-value-notation": null,
+        "selector-id-pattern": null,
+        "media-feature-range-notation": null,
+        "declaration-block-no-duplicate-properties": null,
+        "rule-empty-line-before": null
     }
 };
