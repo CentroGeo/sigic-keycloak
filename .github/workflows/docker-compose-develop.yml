@@ -17,7 +17,7 @@ jobs:
       - name: Install linters
         run: |
           sudo apt-get update && sudo apt-get install -y npm libfreemarker-java
-          npm install -g stylelint eslint stylelint-config-standard stylelint-config-prettier stylelint-config-standard-scss stylelint-scss
+          npm install -g @eslint/js eslint-plugin-prettier eslint-config-prettier globals stylelint stylelint-config-standard stylelint-config-prettier stylelint-config-standard-scss stylelint-scss
           
       - name: Compile and run CheckFtl to Validate .ftl templates with FreeMarker
         run: |
