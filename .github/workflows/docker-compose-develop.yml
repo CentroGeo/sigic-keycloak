@@ -19,36 +19,12 @@ jobs:
           sudo apt-get update && sudo apt-get install -y npm libfreemarker-java
           npm install -g stylelint eslint
           
+
       - name: Validate .ftl templates with FreeMarker
         run: |
-          mkdir -p check-ftl
-          cat > check-ftl/CheckFtl.java <<EOF
-          import java.io.*;
-          import freemarker.template.*;
-  
-          public class CheckFtl {
-            public static void main(String[] args) throws Exception {
-              Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-              cfg.setDefaultEncoding("UTF-8");
-              cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-  
-              for (String filename : args) {
-                try {
-                  Template template = cfg.getTemplate(filename);
-                  System.out.println("✓ " + filename + " is valid.");
-                } catch (Exception e) {
-                  System.err.println("✗ " + filename + " failed validation:");
-                  e.printStackTrace();
-                  System.exit(1);
-                }
-              }
-            }
-          }
-          EOF
-  
-          javac -cp /usr/share/java/freemarker.jar check-ftl/CheckFtl.java
+          javac -cp /usr/share/java/freemarker.jar keycloak/tools/CheckFtl.java
           find keycloak/themes/sigic/ -name '*.ftl' > ftl_files.txt
-          java -cp .:/usr/share/java/freemarker.jar check-ftl.CheckFtl $(cat ftl_files.txt)
+          java -cp .:/usr/share/java/freemarker.jar tools.CheckFtl $(cat ftl_files.txt)
 
       - name: Create minimal stylelint config
         run: |
@@ -68,6 +44,7 @@ jobs:
 
   build-and-test:
     name: Build SIGIC Keycloak image (develop)
+    needs: lint-theme
     runs-on: [self-hosted, build-develop, sigic-keycloak]
     environment: develop
 
@@ -119,6 +96,7 @@ jobs:
         run: |
           docker push ghcr.io/${{ steps.vars.outputs.owner }}/${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.branch }}
           docker push ghcr.io/${{ steps.vars.outputs.owner }}/${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.sha }}
+
 
   deploy:
     name: Deploy to dev server
