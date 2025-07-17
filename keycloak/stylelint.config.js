@@ -1,23 +1,19 @@
 // keycloak/stylelint.config.js
 module.exports = {
-    extends: [
-        "stylelint-config-standard",
-    ],
+    extends: ["stylelint-config-standard"],
     rules: {
-        // Permitir custom properties tipo PatternFly (con mayúsculas y guiones dobles)
-        "custom-property-pattern": "^--pf-v5-[a-zA-Z0-9_\\-]+$",
+        // Desactiva validación de pattern para custom properties (PatternFly no cumple regex estándar)
+        "custom-property-pattern": null,
 
-        // Otras reglas útiles que no molestan a PatternFly
+        // Compatibilidad con estilo de PatternFly
+        "declaration-block-no-redundant-longhand-properties": null,
+        "declaration-block-single-line-max-declarations": null,
+        "selector-not-notation": null,
+        "no-descending-specificity": null,
         "selector-class-pattern": null,
         "property-no-vendor-prefix": null,
         "value-no-vendor-prefix": null,
         "selector-pseudo-element-colon-notation": "double",
-        "declaration-empty-line-before": null,
-
-        // Desactiva reglas innecesarias o problemáticas para CSS generados
-        "declaration-block-single-line-max-declarations": null,
-        "declaration-block-no-redundant-longhand-properties": null,
-        "selector-not-notation": null,
-        "no-descending-specificity": null
+        "declaration-empty-line-before": null
     }
-};
+}
