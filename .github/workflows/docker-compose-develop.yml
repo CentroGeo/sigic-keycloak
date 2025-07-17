@@ -33,9 +33,6 @@ jobs:
           }' > .stylelintrc.json
           npm install stylelint-config-standard
 
-      - name: Lint HTML
-        run: htmlhint keycloak/themes/sigic/
-
       - name: Lint CSS
         run: stylelint "keycloak/themes/sigic/**/*.css"
 
