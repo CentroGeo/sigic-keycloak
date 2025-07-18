@@ -84,6 +84,7 @@ jobs:
             -e KC_DB_USERNAME=${{ secrets.KC_DB_USERNAME }} \
             -e KC_DB_PASSWORD=${{ secrets.KC_DB_PASSWORD }} \
             -e KC_HTTP_ENABLED=true \
+            -e KC_HEALTH_ENABLED=true \
             -p 8090:8080 \
             ghcr.io/${{ steps.vars.outputs.owner }}/${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.branch }}
 
