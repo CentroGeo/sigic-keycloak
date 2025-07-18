@@ -86,7 +86,8 @@ jobs:
             -e KC_HTTP_ENABLED=true \
             -e KC_HEALTH_ENABLED=true \
             -p 8090:8080 \
-            ghcr.io/${{ steps.vars.outputs.owner }}/${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.branch }}
+            ghcr.io/${{ steps.vars.outputs.owner }}/${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.branch }} \
+            start-dev
 
           for i in {1..20}; do
             curl -sSf http://localhost:8090/health/ready && break || sleep 6
