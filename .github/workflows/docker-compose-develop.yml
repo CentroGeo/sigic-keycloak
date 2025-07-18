@@ -19,13 +19,14 @@ jobs:
           sudo apt-get update && sudo apt-get install -y npm libfreemarker-java
           npm install -g stylelint stylelint-config-standard stylelint-config-prettier stylelint-config-standard-scss stylelint-scss
 
-      - name: Set up ESLint 9 in isolated folder
+      - name: Setup ESLint flat config environment
         run: |
           mkdir -p eslint-env
           cd eslint-env
           npm init -y
           npm install eslint@latest @eslint/js eslint-config-prettier eslint-plugin-prettier globals
           cd ..
+          cp keycloak/eslint.config.js eslint-env/eslint.config.js
           
       - name: Compile and run CheckFtl to Validate .ftl templates with FreeMarker
         run: |
