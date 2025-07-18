@@ -25,6 +25,7 @@ jobs:
           cd eslint-env
           npm init -y
           npm install eslint@latest @eslint/js eslint-config-prettier eslint-plugin-prettier globals
+          echo '{ "type": "module" }' > package.json
           cd ..
           cp keycloak/eslint.config.js eslint-env/eslint.config.js
           
