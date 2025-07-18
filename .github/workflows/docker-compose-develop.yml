@@ -40,7 +40,7 @@ jobs:
         run: stylelint "keycloak/themes/sigic/**/*.css" --config keycloak/stylelint.config.js
 
       - name: Lint JS
-        run: node eslint-env/node_modules/eslint/bin/eslint.js "keycloak/themes/sigic/**/*.js" --config keycloak/eslint.config.js
+        run: node eslint-env/node_modules/eslint/bin/eslint.js "keycloak/themes/sigic/**/*.js" --config eslint-env/eslint.config.js
 
   build-and-test:
     name: Build SIGIC Keycloak image (develop)
