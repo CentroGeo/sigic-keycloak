@@ -19,7 +19,7 @@ export default [
       },
     },
     rules: {
-      'no-var': 'error',
+      'no-var': 'off',
       'prefer-const': 'warn',
       'no-console': 'off',
       'no-alert': 'warn',
