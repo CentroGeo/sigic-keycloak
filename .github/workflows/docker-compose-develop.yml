@@ -14,10 +14,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install linters
+      - name: Install linter tools
         run: |
           sudo apt-get update && sudo apt-get install -y npm libfreemarker-java
-          npm install -g eslint@latest @eslint/js eslint-plugin-prettier eslint-config-prettier globals stylelint stylelint-config-standard stylelint-config-prettier stylelint-config-standard-scss stylelint-scss
+          npm install -g stylelint stylelint-config-standard stylelint-config-prettier stylelint-config-standard-scss stylelint-scss
+
+      - name: Set up ESLint 9 in isolated folder
+        run: |
+          mkdir -p .eslint-env
+          cd .eslint-env
+          npm init -y
+          npm install eslint@latest @eslint/js eslint-config-prettier eslint-plugin-prettier globals
+          cd ..
           
       - name: Compile and run CheckFtl to Validate .ftl templates with FreeMarker
         run: |
@@ -26,11 +34,12 @@ jobs:
           find keycloak/themes/sigic/ -name '*.ftl' > ftl_files.txt
           java -cp build/classes:/usr/share/java/freemarker.jar tools.CheckFtl $(cat ftl_files.txt)
 
+
       - name: Lint CSS
         run: stylelint "keycloak/themes/sigic/**/*.css" --config keycloak/stylelint.config.js
 
       - name: Lint JS
-        run: eslint "keycloak/themes/sigic/**/*.js" --config keycloak/eslint.config.js
+        run: node .eslint-env/node_modules/eslint/bin/eslint.js "keycloak/themes/sigic/**/*.js" --config keycloak/eslint.config.js
 
   build-and-test:
     name: Build SIGIC Keycloak image (develop)
