@@ -21,8 +21,8 @@ jobs:
 
       - name: Set up ESLint 9 in isolated folder
         run: |
-          mkdir -p .eslint-env
-          cd .eslint-env
+          mkdir -p eslint-env
+          cd eslint-env
           npm init -y
           npm install eslint@latest @eslint/js eslint-config-prettier eslint-plugin-prettier globals
           cd ..
@@ -39,7 +39,7 @@ jobs:
         run: stylelint "keycloak/themes/sigic/**/*.css" --config keycloak/stylelint.config.js
 
       - name: Lint JS
-        run: node .eslint-env/node_modules/eslint/bin/eslint.js "keycloak/themes/sigic/**/*.js" --config keycloak/eslint.config.js
+        run: node eslint-env/node_modules/eslint/bin/eslint.js "keycloak/themes/sigic/**/*.js" --config keycloak/eslint.config.js
 
   build-and-test:
     name: Build SIGIC Keycloak image (develop)
