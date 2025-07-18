@@ -36,7 +36,8 @@ export default [
       'no-unsafe-optional-chaining': 'warn',
       'no-control-regex': 'warn',
       'no-self-assign': 'warn',
-      'no-misleading-character-class': 'warn'
+      'no-misleading-character-class': 'warn',
+      'no-sparse-arrays': 'warn',
     },
   },
   prettier,
