@@ -29,7 +29,6 @@ services:
     networks:
       - keycloaknet
 
-
 networks:
   keycloaknet:
     driver: bridge
