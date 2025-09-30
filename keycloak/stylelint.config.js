@@ -3,6 +3,7 @@ module.exports = {
     extends: ["stylelint-config-standard-scss"],
     plugins: ["stylelint-scss"],
     rules: {
+        "property-no-deprecated": null,
         "custom-property-pattern": null,
         "declaration-block-no-redundant-longhand-properties": null,
         "declaration-block-single-line-max-declarations": null,
