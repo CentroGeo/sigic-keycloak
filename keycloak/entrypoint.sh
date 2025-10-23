@@ -2,7 +2,9 @@
 set -e
 
 # Esperar a la BD
-until nc -z "${KC_DB_URL_HOST}" 5432; do
+echo "⏳ Esperando base de datos (${KC_DB_URL_HOST}:5432)..."
+
+until (echo > /dev/tcp/${KC_DB_URL_HOST}/5432) >/dev/null 2>&1; do
   echo "⏳ Esperando base de datos..."
   sleep 3
 done
