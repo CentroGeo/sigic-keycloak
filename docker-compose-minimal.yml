@@ -10,6 +10,8 @@ services:
     restart: unless-stopped
     expose:
       - "8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
     environment:
       - KC_DB=postgres
       - KC_DB_URL_HOST=${KC_DB_URL_HOST}
@@ -28,6 +30,9 @@ services:
     networks:
       - sigicnetwork
 
+
+volumes:
+  keycloak_data:
 
 networks:
   sigicnetwork:
