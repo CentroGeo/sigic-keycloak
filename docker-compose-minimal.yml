@@ -28,6 +28,7 @@ services:
     networks:
       - sigicnetwork
 
+
 networks:
   sigicnetwork:
     driver: bridge
