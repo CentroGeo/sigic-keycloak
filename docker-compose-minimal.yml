@@ -25,3 +25,11 @@ services:
       - VIRTUAL_PORT=8080
       - LETSENCRYPT_HOST=${KC_HOSTNAME}
       - LETSENCRYPT_EMAIL=admin@${KC_HOSTNAME}
+    networks:
+      - sigicnetwork
+
+networks:
+  sigicnetwork:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: "1360"
