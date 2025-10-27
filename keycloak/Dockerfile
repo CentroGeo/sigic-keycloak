@@ -4,9 +4,10 @@ USER root
 # Definir variables de entorno mínimas para Keycloak
 ARG KC_DB=postgres
 ARG KC_HTTP_RELATIVE_PATH=/iam
+ARG KC_HTTP_MANAGEMENT_RELATIVE_PATH=/mngt
 ENV KC_DB=${KC_DB}
 ENV KC_HTTP_RELATIVE_PATH=${KC_HTTP_RELATIVE_PATH}
-ENV KC_HTTP_MANAGEMENT_RELATIVE_PATH=${KC_HTTP_RELATIVE_PATH}
+ENV KC_HTTP_MANAGEMENT_RELATIVE_PATH=${KC_HTTP_MANAGEMENT_RELATIVE_PATH}
 
 # Copiar el themes personalizado al directorio de temas
 COPY themes/sigic /opt/keycloak/themes/sigic
