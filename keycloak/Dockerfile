@@ -1,22 +1,17 @@
 FROM quay.io/keycloak/keycloak:26.4.0
+
+
 USER root
+SHELL ["/bin/bash", "-c"]
+WORKDIR /opt/keycloak
 
-# Definir variables de entorno mínimas para Keycloak
-ENV KC_DB=postgres
-ENV KC_HOSTNAME_STRICT=true
-ENV JAVA_OPTS=-Xmx2G
+COPY themes/sigic themes/sigic
+COPY providers/*.jar providers/
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-# Copiar el themes personalizado al directorio de temas
-COPY themes/sigic /opt/keycloak/themes/sigic
-COPY providers/keycloak-orcid.jar /opt/keycloak/providers/
+RUN chmod +x /usr/local/bin/entrypoint.sh && \
+    ./bin/kc.sh build --verbose && \
+    chown -R keycloak:keycloak .
 
-# Copiar entrypoint
-COPY entrypoint.sh /opt/entrypoint.sh
-RUN chmod +x /opt/entrypoint.sh
-
-# Realizar el build de Keycloak con las variables correctamente en entorno
-RUN KC_DB=$KC_DB KC_HOSTNAME_STRICT=$KC_HOSTNAME_STRICT JAVA_OPTS=$JAVA_OPTS /opt/keycloak/bin/kc.sh build
-
-# Volver al usuario keycloak para ejecutar el contenedor
 USER keycloak
-ENTRYPOINT ["/opt/entrypoint.sh"]
+ENTRYPOINT ["entrypoint.sh"]

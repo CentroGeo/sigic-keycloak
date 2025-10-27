@@ -4,15 +4,13 @@ services:
     build:
       context: ./keycloak
       dockerfile: Dockerfile
-    command: start --optimized
-    # command: start-dev
-    # usar start-dev para desarrollo en lugar de start --optimized
     restart: unless-stopped
     expose:
       - "8080"
     volumes:
       - keycloak_data:/opt/keycloak/data
     environment:
+      - KC_DEV_MODE=${KC_DEV_MODE:-false}
       - KC_DB=postgres
       - KC_DB_URL_HOST=${KC_DB_URL_HOST}
       - KC_DB_URL_DATABASE=${KC_DB_URL_DATABASE}
@@ -20,16 +18,13 @@ services:
       - KC_DB_PASSWORD=${KC_DB_PASSWORD}
       - KC_HOSTNAME=${KC_HOSTNAME}
       - KC_PROXY_HEADERS=xforwarded
-      - KC_HOSTNAME_STRICT=${KC_HOSTNAME_STRICT:-true}
+      - KC_HOSTNAME_STRICT=${KC_HOSTNAME_STRICT:-false}
+      - KC_HOSTNAME_STRICT_HTTPS=${KC_HOSTNAME_STRICT_HTTPS:-false}
       - KC_HTTP_ENABLED=true
+      - KC_HTTP_RELATIVE_PATH=${KC_HTTP_RELATIVE_PATH:-/iam}
       - JAVA_OPTS=${JAVA_OPTS}
-      - VIRTUAL_HOST=${KC_HOSTNAME}
-      - VIRTUAL_PORT=8080
-      - LETSENCRYPT_HOST=${KC_HOSTNAME}
-      - LETSENCRYPT_EMAIL=admin@${KC_HOSTNAME}
     networks:
       - sigicnetwork
-
 
 volumes:
   keycloak_data:
