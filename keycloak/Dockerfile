@@ -15,7 +15,7 @@ COPY entrypoint.sh /opt/entrypoint.sh
 RUN chmod +x /opt/entrypoint.sh
 
 # Realizar el build de Keycloak con las variables correctamente en entorno
-RUN /opt/keycloak/bin/kc.sh build
+RUN /opt/keycloak/bin/kc.sh build --http-relative-path=$KC_HTTP_RELATIVE_PATH
 
 # Volver al usuario keycloak para ejecutar el contenedor
 USER keycloak
