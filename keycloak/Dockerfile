@@ -1,14 +1,14 @@
 FROM quay.io/keycloak/keycloak:26.4.0
-
 USER root
-SHELL ["/bin/bash", "-c"]
-WORKDIR /opt/keycloak
 
+# Copiar el themes personalizado al directorio de temas
 COPY themes/sigic /opt/keycloak/themes/sigic
-COPY providers/*.jar /opt/keycloak/providers/
-COPY entrypoint.sh /opt/entrypoint.sh
-RUN chmod +x /opt/entrypoint.sh && \
-    chown -R keycloak:keycloak .
+COPY providers/keycloak-orcid.jar /opt/keycloak/providers/
 
+# Copiar entrypoint
+COPY entrypoint.sh /opt/entrypoint.sh
+RUN chmod +x /opt/entrypoint.sh
+
+# Volver al usuario keycloak para ejecutar el contenedor
 USER keycloak
 ENTRYPOINT ["/opt/entrypoint.sh"]
