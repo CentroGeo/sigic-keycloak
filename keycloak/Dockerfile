@@ -1,6 +1,11 @@
 FROM quay.io/keycloak/keycloak:26.4.0
 USER root
 
+# Definir variables de entorno mínimas para Keycloak
+ARG KC_DB=postgres
+ARG KC_HTTP_RELATIVE_PATH=/iam
+ENV KC_DB=$KC_DB KC_HTTP_RELATIVE_PATH=$KC_HTTP_RELATIVE_PATH
+
 # Copiar el themes personalizado al directorio de temas
 COPY themes/sigic /opt/keycloak/themes/sigic
 COPY providers/keycloak-orcid.jar /opt/keycloak/providers/
