@@ -1,7 +1,8 @@
 :root {
-  --keycloak-logo-url: url('../img/cyt_logo.png');
+  --keycloak-logo-url: url('../img/sigic_logo.svg');
   --keycloak-bg-logo-url: url("../img/fondo_gris.jpg");
-  --keycloak-logo-height: 63px;
+  /* --keycloak-logo-height: 63px; */
+  --keycloak-logo-height: 8rem;
   --keycloak-logo-width: 20rem;
 }
 
