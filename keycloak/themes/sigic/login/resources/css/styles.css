@@ -1,4 +1,5 @@
 /* perfil sigic https://sigic.dev.geoint.mx/ */
+
 /* body[data-perfil='sigic'], */
 body, :root {
   /* colores primarios */
@@ -24,11 +25,11 @@ body, :root {
 }
 
 :root {
-  --keycloak-logo-url: url('../img/sigic_logo.svg');
-  --keycloak-bg-logo-url: url("../img/fondo_gris.jpg");
   /* --keycloak-logo-height: 63px; */
   --keycloak-logo-height: 8rem;
   --keycloak-logo-width: 20rem;
+  --keycloak-logo-url: url('../img/sigic_logo.svg');
+  --keycloak-bg-logo-url: url("../img/fondo_gris.jpg");
 }
 
 body {
