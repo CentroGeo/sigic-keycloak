@@ -44,7 +44,9 @@
     </#list>
   </#if>
   <title>${msg("loginTitle",(realm.displayName!''))}</title>
-  <link rel="icon" href="${url.resourcesPath}/img/favicon.ico" />
+  <#--  <link rel="icon" href="${url.resourcesPath}/img/favicon.ico" />  -->
+  <link rel="shortcut icon" href="https://framework-gb.cdn.gob.mx/gm/v3/assets/images/favicon.ico" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/CentroGeo/sisdai-css@v1.10.2/dist/sisdai.min.css">
   <#if properties.stylesCommon?has_content>
     <#list properties.stylesCommon?split(' ') as style>
       <link href="${url.resourcesCommonPath}/${style}" rel="stylesheet" />
@@ -55,7 +57,6 @@
       <link href="${url.resourcesPath}/${style}" rel="stylesheet" />
     </#list>
   </#if>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/CentroGeo/sisdai-css@v1.9.0/dist/sisdai.min.css">
   <script type="importmap">
     {
       "imports": {
