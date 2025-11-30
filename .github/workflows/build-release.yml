@@ -1,0 +1,172 @@
+name: Build & Release Keycloak
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/keycloak
+
+jobs:
+  lint-sigic-theme:
+    name: Lint Keycloak sigic theme
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install linter tools
+        run: |
+          sudo apt-get update && sudo apt-get install -y npm libfreemarker-java
+          npm install -g stylelint stylelint-config-standard stylelint-config-prettier stylelint-config-standard-scss stylelint-scss
+
+      - name: Setup ESLint flat config environment
+        run: |
+          mkdir -p eslint-env
+          cd eslint-env
+          npm init -y
+          npm install eslint@latest @eslint/js eslint-config-prettier eslint-plugin-prettier globals
+          echo '{ "type": "module" }' > package.json
+          cd ..
+          cp keycloak/eslint.config.js eslint-env/eslint.config.js
+
+      - name: Compile and run CheckFtl to Validate .ftl templates with FreeMarker
+        run: |
+          mkdir -p build/classes
+          javac -d build/classes -cp /usr/share/java/freemarker.jar keycloak/tools/CheckFtl.java
+          find keycloak/themes/sigic/ -name '*.ftl' > ftl_files.txt
+          java -cp build/classes:/usr/share/java/freemarker.jar tools.CheckFtl $(cat ftl_files.txt)
+
+
+      - name: Lint CSS
+        run: stylelint "keycloak/themes/sigic/**/*.css" --config keycloak/stylelint.config.js
+
+      - name: Lint JS
+        run: node eslint-env/node_modules/eslint/bin/eslint.js "keycloak/themes/sigic/**/*.js" --config eslint-env/eslint.config.js
+
+  build:
+    runs-on: ubuntu-latest
+    needs: lint-sigic-theme
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify tag belongs to main
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          git fetch origin main
+
+          TAG_COMMIT="$(git rev-list -n 1 $GITHUB_REF)"
+
+          if git merge-base --is-ancestor "$TAG_COMMIT" origin/main; then
+            echo "✅ Tag pertenece a main."
+          else
+            echo "❌ Tag NO pertenece a main. Abortando release."
+            exit 1
+          fi
+
+      # -------------------------
+      # Login GHCR
+      # -------------------------
+
+      - name: Login GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+            docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # -------------------------
+      # Resolver tags
+      # -------------------------
+
+      - name: Resolve version
+        id: vars
+        run: |
+          REF="${GITHUB_REF#refs/}"
+
+          if [[ "$REF" == "heads/main" ]]; then
+            VERSION="latest"
+            FLOAT_MONTH=""
+            FLOAT_MINOR=""
+
+          elif [[ "$REF" == tags/v* ]]; then
+            VERSION="${REF#tags/}"
+
+            BASE="${VERSION#v}"
+            YM="${BASE%.*-*}"
+            MINOR="${BASE#"$YM."}"
+            MINOR="${MINOR%-*}"
+
+            FLOAT_MONTH="$YM"
+            FLOAT_MINOR="$YM.$MINOR"
+
+          else
+            echo "Unsupported ref: $REF"
+            exit 1
+          fi
+
+          IMAGE="$(echo "$REGISTRY/$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')"
+
+          {
+            echo "image=$IMAGE"
+            echo "version=$VERSION"
+            echo "float_month=$FLOAT_MONTH"
+            echo "float_minor=$FLOAT_MINOR"
+          } >> $GITHUB_OUTPUT
+
+      # -------------------------
+      # Build base
+      # -------------------------
+
+      - name: Build image
+        run: |
+          docker build \
+            -t "${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.version }}" \
+            ./docker/keycloak
+
+      # -------------------------
+      # Push canonical tag
+      # -------------------------
+
+      - name: Push version
+        run: |
+          docker push \
+            "${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.version }}"
+
+      # -------------------------
+      # Crear y subir tags flotantes
+      # -------------------------
+
+      - name: Push floating tags
+        if: steps.vars.outputs.float_month != ''
+        run: |
+          IMAGE="${{ steps.vars.outputs.image }}"
+          VERSION="${{ steps.vars.outputs.version }}"
+          MONTH="${{ steps.vars.outputs.float_month }}"
+          MINOR="${{ steps.vars.outputs.float_minor }}"
+
+          docker tag "$IMAGE:$VERSION" "$IMAGE:$MONTH"
+          docker tag "$IMAGE:$VERSION" "$IMAGE:$MINOR"
+
+          docker push "$IMAGE:$MONTH"
+          docker push "$IMAGE:$MINOR"
+
+      # -------------------------
+      # Crear GitHub Release
+      # -------------------------
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Keycloak ${{ steps.vars.outputs.version }}"
+          tag_name: ${{ steps.vars.outputs.version }}
+          generate_release_notes: true
