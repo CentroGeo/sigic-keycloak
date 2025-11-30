@@ -130,7 +130,7 @@ jobs:
         run: |
           docker build \
             -t "${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.version }}" \
-            ./docker/keycloak
+            ./keycloak
 
       # -------------------------
       # Push canonical tag
