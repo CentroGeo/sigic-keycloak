@@ -1,14 +1,57 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# ==================================================
+# Settings
+# ==================================================
+
+OWNER="TuOrg"
+REPO="tu-repo"
+GITHUB_TOKEN="${GITHUB_TOKEN_CI:-}"
+
+# ==================================================
+# Safety checks
+# ==================================================
+
 BRANCH=$(git branch --show-current)
+HEAD=$(git rev-parse HEAD)
 
 if [ "$BRANCH" != "main" ]; then
-  echo "❌ Debes correr release.sh desde la rama main. Estás en: $BRANCH"
+  echo "❌ Debes correr release.sh desde main"
   exit 1
 fi
 
-MODE="${1:-patch}"   # patch | minor
+if ! git diff-index --quiet HEAD --; then
+  echo "❌ Working tree sucio"
+  exit 1
+fi
+
+if [ -z "$GITHUB_TOKEN" ]; then
+  echo "❌ Variable GITHUB_TOKEN_CI no definida"
+  exit 1
+fi
+
+# ==================================================
+# Check CI status
+# ==================================================
+
+STATUS=$(curl -sf \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  "https://api.github.com/repos/$OWNER/$REPO/commits/$HEAD/status" \
+  | jq -r '.state')
+
+if [ "$STATUS" != "success" ]; then
+  echo "❌ CI NO verde ($STATUS). No se puede liberar."
+  exit 1
+fi
+
+echo "✅ CI verificado OK"
+
+# ==================================================
+# Version calculation
+# ==================================================
+
+MODE="${1:-patch}"
 YM="$(date +%Y.%m)"
 
 LAST=$(git tag --list "v$YM.*" --sort=-v:refname | head -n1)
@@ -31,7 +74,11 @@ fi
 
 TAG="v$YM.$MINOR-$PATCH"
 
+# ==================================================
+# Create tag
+# ==================================================
+
 git tag "$TAG"
 git push origin "$TAG"
 
-echo "✅ Release creada => $TAG"
+echo "🚀 Release creada y publicada: $TAG"
