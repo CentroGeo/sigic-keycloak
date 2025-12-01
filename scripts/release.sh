@@ -5,8 +5,11 @@ set -euo pipefail
 # Settings
 # ==================================================
 
-OWNER="TuOrg"
-REPO="tu-repo"
+REPO_FULL=$(git config --get remote.origin.url | sed -E 's#.*github.com[:/](.+)/(.+)\.git#\1/\2#')
+
+OWNER="${REPO_FULL%/*}"
+REPO="${REPO_FULL#*/}"
+
 GITHUB_TOKEN="${GITHUB_TOKEN_CI:-}"
 
 # ==================================================
@@ -16,10 +19,37 @@ GITHUB_TOKEN="${GITHUB_TOKEN_CI:-}"
 BRANCH=$(git branch --show-current)
 HEAD=$(git rev-parse HEAD)
 
-if [ "$BRANCH" != "main" ]; then
-  echo "❌ Debes correr release.sh desde main"
+echo "🔐 Rama actual: $BRANCH"
+
+[ "$BRANCH" = "main" ] || { echo "❌ Debe ejecutarse desde main"; exit 1; }
+[ -n "$TOKEN" ] || { echo "❌ GITHUB_TOKEN_CI no definido"; exit 1; }
+
+command -v jq >/dev/null || { echo "❌ Falta jq"; exit 1; }
+
+echo "🔎 Verificando CheckRuns CI para:"
+echo "    $HEAD"
+
+RAW=$(curl -s \
+  -H "Authorization: token $TOKEN" \
+  -H "Accept: application/vnd.github+json" \
+  "https://api.github.com/repos/$OWNER/$REPO/commits/$HEAD/check-runs")
+
+echo "Respuesta CI:"
+echo "$RAW" | jq '.check_runs[].name, .check_runs[].conclusion'
+
+TOTAL=$(echo "$RAW" | jq '.total_count')
+
+[ "$TOTAL" -gt 0 ] || {
+  echo "❌ No hay checks reportados aún"
   exit 1
-fi
+}
+
+FAILED=$(echo "$RAW" | jq '[.check_runs[] | select(.conclusion != "success")] | length')
+
+[ "$FAILED" -eq 0 ] || {
+  echo "❌ Hay checks fallidos o pendientes"
+  exit 1
+}
 
 if ! git diff-index --quiet HEAD --; then
   echo "❌ Working tree sucio"
@@ -30,6 +60,8 @@ if [ -z "$GITHUB_TOKEN" ]; then
   echo "❌ Variable GITHUB_TOKEN_CI no definida"
   exit 1
 fi
+
+echo "✅ Todos los checks CI están SUCCESS"
 
 # ==================================================
 # Check CI status
