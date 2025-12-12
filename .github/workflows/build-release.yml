@@ -94,22 +94,29 @@ jobs:
           echo "✅ Commit corresponde al main real"
 
       # -----------------------------------------------
-      # Verificar CI global (defensivo)
+      # Verificar CI global usando Check Runs (SIN deadlock)
       # -----------------------------------------------
-      - name: Verify global CI status
+      - name: Verify completed check-runs
+        if: env.DRY_RUN != 'true'
         run: |
-          STATUS=$(curl -s \
+          RAW=$(curl -s \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/status" \
-            | jq -r '.state')
+            "https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/check-runs")
 
-          if [ "$STATUS" != "success" ]; then
-            echo "❌ CI no está verde ($STATUS)"
+          FAILED=$(echo "$RAW" | jq '
+            [.check_runs[]
+              | select(.status == "completed")
+              | select(.conclusion != "success")
+            ] | length')
+
+          if [ "$FAILED" -ne 0 ]; then
+            echo "❌ Hay checks completados con error"
+            echo "$RAW" | jq '.check_runs[] | {name, status, conclusion}'
             exit 1
           fi
 
-          echo "✅ CI global OK"
+          echo "✅ Todos los checks completados están OK"
 
       # -----------------------------------------------
       # Resolver versión (Dockerfile + tags)
