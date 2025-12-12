@@ -1,4 +1,4 @@
-FROM quay.io/keycloak/keycloak:26.4.0
+FROM quay.io/keycloak/keycloak:26.4.7
 USER root
 
 # Definir variables de entorno mínimas para Keycloak
@@ -14,7 +14,7 @@ COPY entrypoint.sh /opt/entrypoint.sh
 RUN chmod +x /opt/entrypoint.sh
 
 # Realizar el build de Keycloak con las variables correctamente en entorno
-RUN /opt/keycloak/bin/kc.sh build
+RUN KC_DB=$KC_DB /opt/keycloak/bin/kc.sh build
 
 
 # Volver al usuario keycloak para ejecutar el contenedor
