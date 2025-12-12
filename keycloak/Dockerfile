@@ -2,9 +2,13 @@ FROM quay.io/keycloak/keycloak:26.4.6
 USER root
 
 # Definir variables de entorno mínimas para Keycloak
-ENV KC_DB=postgres
-ENV KC_HOSTNAME_STRICT=true
-ENV JAVA_OPTS=-Xmx2G
+ARG KC_DB=postgres
+ARG KC_HTTP_RELATIVE_PATH=/iam
+ARG KC_HTTP_MANAGEMENT_RELATIVE_PATH=/iam/mngt
+
+ENV KC_DB=${KC_DB}
+ENV KC_HTTP_RELATIVE_PATH=${KC_HTTP_RELATIVE_PATH}
+ENV KC_HTTP_MANAGEMENT_RELATIVE_PATH=${KC_HTTP_MANAGEMENT_RELATIVE_PATH}
 
 # Copiar el themes personalizado al directorio de temas
 COPY themes/sigic /opt/keycloak/themes/sigic
@@ -15,7 +19,8 @@ COPY entrypoint.sh /opt/entrypoint.sh
 RUN chmod +x /opt/entrypoint.sh
 
 # Realizar el build de Keycloak con las variables correctamente en entorno
-RUN KC_DB=$KC_DB KC_HOSTNAME_STRICT=$KC_HOSTNAME_STRICT JAVA_OPTS=$JAVA_OPTS /opt/keycloak/bin/kc.sh build
+RUN /opt/keycloak/bin/kc.sh build --http-relative-path=${KC_HTTP_RELATIVE_PATH} --http-management-relative-path=${KC_HTTP_MANAGEMENT_RELATIVE_PATH}
+
 
 # Volver al usuario keycloak para ejecutar el contenedor
 USER keycloak
