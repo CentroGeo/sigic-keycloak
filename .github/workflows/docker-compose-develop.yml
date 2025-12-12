@@ -64,7 +64,7 @@ jobs:
         id: vars
         run: |
           echo "owner=centrogeo" >> $GITHUB_OUTPUT
-          echo "image=sigic-keycloak" >> $GITHUB_OUTPUT
+          echo "image=sigic-keycloak/keycloak-develop" >> $GITHUB_OUTPUT
           echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           echo "branch=develop" >> $GITHUB_OUTPUT
 
@@ -115,7 +115,7 @@ jobs:
         id: vars
         run: |
           echo "owner=centrogeo" >> $GITHUB_OUTPUT
-          echo "image=sigic-keycloak" >> $GITHUB_OUTPUT
+          echo "image=sigic-keycloak/keycloak-develop" >> $GITHUB_OUTPUT
           echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           echo "branch=develop" >> $GITHUB_OUTPUT
 
