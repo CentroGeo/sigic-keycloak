@@ -35,6 +35,7 @@ services:
       - nginx-proxy
 
   keycloak:
+    image: ghcr.io/centrogeo/sigic-keycloak/keycloak:${KEYCLOAK_TAG:-develop}
     build:
       context: ./keycloak
       dockerfile: Dockerfile
