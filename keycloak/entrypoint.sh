@@ -14,7 +14,9 @@ echo "✅ Base de datos disponible."
 # Verificar si ya se inicializó
 if [ -f "$FLAG_FILE" ]; then
   echo "✅ Admin ya inicializado previamente, arrancando Keycloak normalmente..."
-  exec /opt/keycloak/bin/kc.sh start --optimized
+  exec /opt/keycloak/bin/kc.sh start \
+  --http-relative-path="${KC_HTTP_RELATIVE_PATH:-/}" \
+  --http-management-relative-path="${KC_HTTP_RELATIVE_PATH:-/}"
 fi
 
 # Primera ejecución: crear admin
