@@ -1,7 +1,10 @@
 
 services:
   keycloak:
-    image: ghcr.io/centrogeo/sigic-keycloak:main
+    image: ghcr.io/centrogeo/sigic-keycloak/keycloak-develop:${KEYCLOAK_TAG:-develop}
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile
     command: start --optimized
     # command: start-dev
     # usar start-dev para desarrollo en lugar de start --optimized

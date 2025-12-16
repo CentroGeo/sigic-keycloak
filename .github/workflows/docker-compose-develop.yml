@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GHCR_GEOINTSIGIC_PAT }}" | docker login ghcr.io -u geointsigic --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Set variables
         id: vars
@@ -120,11 +120,7 @@ jobs:
           echo "branch=develop" >> $GITHUB_OUTPUT
 
       - name: Docker login to GHCR
-        run: echo ${{ secrets.GHCR_GEOINTSIGIC_PAT }} | docker login ghcr.io -u geointsigic --password-stdin
-
-      - name: Reemplazar imagen en docker-compose-ghcr.yml
-        run: |
-          sed -i "s|ghcr.io/${{ steps.vars.outputs.owner }}/${{ steps.vars.outputs.image }}:.*|ghcr.io/${{ steps.vars.outputs.owner }}/${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.sha }}|g" docker-compose-ghcr.yml
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Docker Compose up
         run: |
@@ -135,6 +131,7 @@ jobs:
           KC_DB_PASSWORD: ${{ secrets.KC_DB_PASSWORD }}
           KC_DB_URL_HOST: ${{ secrets.KC_DB_URL_HOST }}
           KC_DB_URL_DATABASE: ${{ secrets.KC_DB_URL_DATABASE }}
+          KC_HTTP_RELATIVE_PATH: ${{ secrets.KC_HTTP_RELATIVE_PATH }}
           KC_DB: ${{ vars.KC_DB }}
           KC_HOSTNAME: ${{ vars.KC_HOSTNAME }}
           KC_HOSTNAME_STRICT: ${{ vars.KC_HOSTNAME_STRICT }}
