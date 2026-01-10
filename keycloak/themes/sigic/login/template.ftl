@@ -19,7 +19,7 @@
           aria-label="${msg('restartLoginTooltip')}"
           onclick="location.href='${url.loginRestartFlowUrl}'"
         >
-          <i class="fa-sync-alt fas" aria-hidden="true"></i>
+          <i class="pictograma-restablecer" aria-hidden="true"></i>
           <span class="kc-tooltip-text">${msg("restartLoginTooltip")}</span>
         </button>
       </div>
