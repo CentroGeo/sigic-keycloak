@@ -32,7 +32,7 @@ const policies = {
     }
   },
   specialChars: (policy, value) => {
-    let specialChars = value.split("").filter((char) => char.match(/\W/));
+    const specialChars = value.split("").filter((char) => char.match(/\W/));
     if (specialChars.length < policy.value) {
       return templateError(policy);
     }
