@@ -1,4 +1,4 @@
-FROM quay.io/keycloak/keycloak:26.4.7
+FROM quay.io/keycloak/keycloak:26.8.2
 USER root
 
 # Definir variables de entorno mínimas para Keycloak
