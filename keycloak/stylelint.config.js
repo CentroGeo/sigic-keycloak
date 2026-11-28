@@ -1,12 +1,12 @@
 // keycloak/stylelint.config.js
 module.exports = {
     extends: ["stylelint-config-standard-scss"],
-    plugins: ["stylelint-scss"],
+    plugins: ["stylelint-scss", "@stylistic/stylelint-plugin"],
     rules: {
         "property-no-deprecated": null,
         "custom-property-pattern": null,
         "declaration-block-no-redundant-longhand-properties": null,
-        "declaration-block-single-line-max-declarations": null,
+        "@stylistic/declaration-block-single-line-max-declarations": null,
         "value-keyword-case": null,
         "selector-class-pattern": null,
         "property-no-vendor-prefix": null,
